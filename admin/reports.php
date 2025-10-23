@@ -143,7 +143,8 @@ if ($conn) {
                             </thead>
                             <tbody>
                                 <?php 
-                                $total = array_sum(array_column($reports['client_demographics'], 'count'));
+                                $counts = array_column($reports['client_demographics'], 'count');
+                                $total = !empty($counts) ? array_sum($counts) : 0;
                                 foreach ($reports['client_demographics'] as $row): 
                                     $percentage = $total > 0 ? round(($row['count'] / $total) * 100, 1) : 0;
                                 ?>

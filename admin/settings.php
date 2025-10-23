@@ -96,9 +96,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         
                         $tables = ['users', 'clients', 'assessments', 'barriers', 'action_plans', 'resources', 'team_notes', 'progress_milestones'];
                         foreach ($tables as $table) {
-                            $result = $conn->query("SELECT COUNT(*) as count FROM $table");
-                            $count = $result->fetch_assoc()['count'];
-                            echo "<tr><td>" . ucfirst($table) . "</td><td>$count</td></tr>";
+                            // Validate table name against whitelist
+                            $safeTables = ['users', 'clients', 'assessments', 'barriers', 'action_plans', 'resources', 'team_notes', 'progress_milestones'];
+                            if (in_array($table, $safeTables)) {
+                                $result = $conn->query("SELECT COUNT(*) as count FROM " . $conn->real_escape_string($table));
+                                if ($result) {
+                                    $count = $result->fetch_assoc()['count'];
+                                    echo "<tr><td>" . htmlspecialchars(ucfirst($table)) . "</td><td>" . htmlspecialchars($count) . "</td></tr>";
+                                }
+                            }
                         }
                         
                         echo "</table>";
